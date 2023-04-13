@@ -74,8 +74,8 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
     Key([mod, "control"], "z", lazy.spawn("rofi -show drun -show-icons"), desc="Launch rofi"),
-    Key([mod], "z", lazy.spawn("home/gaumeloth/.config/rofi/scripts/launcher_t1"), desc="Launch rofi"),
-    Key([mod], "x", lazy.spawn("./home/gaumeloth/.config/rofi/scripts/powermenu_t1"), desc="Launch rofi powermenu"),
+    Key([mod], "z", lazy.spawn("/home/gaumeloth/.config/rofi/scripts/launcher_t1"), desc="Launch rofi"),
+    Key([mod], "x", lazy.spawn("/home/gaumeloth/.config/rofi/scripts/powermenu_t1"), desc="Launch rofi powermenu"),
 ]
 
 groups = [Group(i) for i in "123456789"]

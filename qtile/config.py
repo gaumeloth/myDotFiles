@@ -78,7 +78,7 @@ keys = [
 #    Key([mod, "shift"], "Return", lazy.spawn("ranger"), desc="Launch ranger"),
     Key([mod], "z", lazy.spawn("/home/gaumeloth/.config/rofi/scripts/launcher_t1"), desc="Launch rofi"),
     Key([mod], "x", lazy.spawn("/home/gaumeloth/.config/rofi/scripts/powermenu_t1"), desc="Launch rofi powermenu"),
-#    Key([mod], "b", lazy.spawn("qutebrowser"), desc="Launch qutebrowser"),
+    Key([mod], "b", lazy.spawn("qutebrowser"), desc="Launch qutebrowser"),
     Key([mod], "t", lazy.spawn("telegram-desktop"), desc="Launch telegram"),
 ]
 

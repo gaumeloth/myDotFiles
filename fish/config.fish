@@ -3,3 +3,5 @@ if status is-interactive
 end
 
 neofetch
+
+starship init fish | source

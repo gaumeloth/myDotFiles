@@ -80,6 +80,7 @@ keys = [
     Key([mod], "x", lazy.spawn("/home/gaumeloth/.config/rofi/scripts/powermenu_t1"), desc="Launch rofi powermenu"),
     Key([mod], "b", lazy.spawn("qutebrowser"), desc="Launch qutebrowser"),
     Key([mod], "t", lazy.spawn("telegram-desktop"), desc="Launch telegram"),
+    Key([mod], "v", lazy.spawn("pavucontrol-qt"), desc="Launch pavucontrol (volume manager)"),
 ]
 
 groups = [Group(i) for i in "123456789"]

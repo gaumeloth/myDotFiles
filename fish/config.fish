@@ -3,5 +3,6 @@ if status is-interactive
 end
 
 neofetch
+misfortune -a
 
 starship init fish | source

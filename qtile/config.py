@@ -203,7 +203,7 @@ reconfigure_screens = True
 
 @hook.subscribe.startup_once
 def autostart():
-    home = os.path.expanduser('~/.config/qtile/autostart.sh')
+    home = os.path.expanduser('~/.config/qtile/scripts/autostart.sh')
     subprocess.Popen([home])
 
 # If things like steam games want to auto-minimize themselves when losing

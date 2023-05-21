@@ -82,6 +82,7 @@ keys = [
     Key([mod], "t", lazy.spawn("telegram-desktop"), desc="Launch telegram"),
     Key([mod], "v", lazy.spawn("pavucontrol-qt"), desc="Launch pavucontrol (volume manager)"),
     Key([mod], "s", lazy.spawn("steam"), desc="Launch steam"),
+    Key([mod], "o", lazy.spawn("oni"), desc="Launch oni"),
 ]
 
 groups = [Group(i) for i in "123456789"]

@@ -11,7 +11,7 @@
 
 # Current Theme
 dir="$HOME/.config/rofi/powermenu/type-4"
-theme='style-5'
+theme='style-2'
 
 # CMDs
 uptime="`uptime -p | sed -e 's/up //g'`"
@@ -73,6 +73,8 @@ run_cmd() {
 				i3-msg exit
 			elif [[ "$DESKTOP_SESSION" == 'plasma' ]]; then
 				qdbus org.kde.ksmserver /KSMServer logout 0 0 0
+			elif [[ "$DESKTOP_SESSION" == 'qtile' ]]; then
+				qtile cmd-obj -o cmd -f shutdown
 			fi
 		fi
 	else

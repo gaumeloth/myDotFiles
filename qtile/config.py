@@ -27,7 +27,7 @@
 import os
 import subprocess
 from libqtile import bar, layout, widget, hook
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile.config import Click, Drag, Group, Key, Match, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
@@ -60,7 +60,7 @@ keys = [
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
-    Key([mod, "shift"], "s",lazy.layout.toggle_split(),desc="Toggle between split and unsplit sides of stack"),
+    Key([mod, "shift"], "s", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     # Toggle between different layouts as defined below
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
@@ -71,16 +71,19 @@ keys = [
     Key([mod, "control"], "z", lazy.spawn("rofi -show drun -show-icons"), desc="Launch rofi"),
     Key([mod, "control"], "Return", lazy.spawn("nemo"), desc="Launch nemo"),
     Key([mod, "shift"], "Return", lazy.spawn("alacritty -T ranger -e ranger"), desc="Launch ranger"),
-    Key([mod], "z", lazy.spawn("/home/gaumeloth/.config/rofi/scripts/launcher_t1"), desc="Launch rofi"),
-    Key([mod], "x", lazy.spawn("/home/gaumeloth/.config/rofi/scripts/powermenu_t4"), desc="Launch rofi powermenu"),
+    Key([mod], "z", lazy.spawn(os.path.expanduser("~/.config/rofi/scripts/launcher_t1")), desc="Launch rofi"),
+    Key([mod], "x", lazy.spawn(os.path.expanduser("~/.config/rofi/scripts/powermenu_t6")), desc="Launch rofi powermenu"),
+    Key([mod], "w", lazy.spawn(os.path.expanduser("~/.config/rofi/scripts/launcher_twindow")), desc="Launch rofi windows"),
     Key([mod], "b", lazy.spawn("qutebrowser"), desc="Launch qutebrowser"),
     Key([mod], "t", lazy.spawn("telegram-desktop"), desc="Launch telegram"),
     Key([mod], "v", lazy.spawn("pavucontrol-qt"), desc="Launch pavucontrol (volume manager)"),
     Key([mod], "s", lazy.spawn("steam"), desc="Launch steam"),
     Key([mod], "o", lazy.spawn("oni"), desc="Launch oni"),
+    Key([], "Print", lazy.spawn("flameshot full --path /home/gaumeloth/Immagini/screenshot"), desc="take a screenshot"),
 ]
 
 groups = [Group(i) for i in "123456789"]
+
 
 for i in groups:
     keys.extend(
@@ -112,8 +115,25 @@ for i in groups:
         ]
     )
 
+groups.append(ScratchPad('scratchpad', [
+    DropDown('term', 'alacritty', width=0.96, height=0.4, x=0.02, y=0.01, opacity=0.80),
+    DropDown('bpytop', 'alacritty -e bpytop', width=0.65, height=0.65, x=0.17, y=0.15, opacity=0.70),
+    DropDown('ranger', 'alacritty -e ranger', width=0.85, height=0.55, x=0.02, y=0.01, opacity=0.80),
+    DropDown('speedcrunch', 'speedcrunch', width=0.3, height=0.4, x=0.67, y=0.55, opacity=0.80),
+    DropDown('music', 'alacritty -e cmus', width=0.96, height=0.4, x=0.02, y=0.01, opacity=0.80),
+]))
+
+keys.extend([
+    Key(["control"], "1", lazy.group['scratchpad'].dropdown_toggle('term')),
+    Key(["control"], "2", lazy.group['scratchpad'].dropdown_toggle('bpytop')),
+    Key(["control"], "3", lazy.group['scratchpad'].dropdown_toggle('ranger')),
+    Key(["control"], "4", lazy.group['scratchpad'].dropdown_toggle('speedcrunch')),
+    Key(["control"], "5", lazy.group['scratchpad'].dropdown_toggle('music')),
+])
+
+
 layouts = [
-    layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
+    layout.Columns(border_focus=["#0000ff"], border_width=2),
     layout.Max(),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
@@ -129,8 +149,8 @@ layouts = [
 ]
 
 widget_defaults = dict(
-    font="sans",
-    fontsize=12,
+    font="FiraCode Nerd Font",
+    fontsize=13,
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
@@ -140,7 +160,9 @@ screens = [
         top=bar.Bar(
             [
                 widget.CurrentLayoutIcon(),
+                widget.TextBox("|", fontsize=18),
                 widget.GroupBox(),
+                widget.TextBox("|", fontsize=18),
                 widget.Prompt(),
                 widget.WindowName(),
                 widget.Chord(
@@ -149,20 +171,29 @@ screens = [
                     },
                     name_transform=lambda name: name.upper(),
                 ),
+                widget.Cmus(),
+                widget.TextBox("|", fontsize=18),
                 widget.Memory(),
                 widget.MemoryGraph(),
                 widget.SwapGraph(),
-#                widget.ThermalSensor(),
-#                widget.ThermalZone(),
+                # widget.ThermalSensor(),
+                # widget.ThermalZone(),
                 widget.CPU(),
                 widget.CPUGraph(),
-#                widget.PulseVolume(),
-#                widget.CheckUpdates(),
-#                widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
+                # widget.PulseVolume(),
+                # widget.TextBox("󱑢", fontsize=18),
+                # widget.CheckUpdates(distro="Arch_paru", no_update_string="no update"),
+                # widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
                 # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
                 # widget.StatusNotifier(),
+                widget.TextBox("|", fontsize=18),
                 widget.Systray(),
-                widget.Clock(format="%Y-%m-%d %a %I:%M %p"),
+                widget.TextBox("| ", fontsize=18),
+                widget.Clock(
+                    format="%d/%m/%Y %a %I:%M %p",
+                    font="OCR A Std",
+                    fontsize=11
+                    ),
             ],
             24,
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
@@ -199,8 +230,7 @@ auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
 
-#autostart script
-
+# autostart script
 @hook.subscribe.startup_once
 def autostart():
     home = os.path.expanduser('~/.config/qtile/scripts/autostart.sh')

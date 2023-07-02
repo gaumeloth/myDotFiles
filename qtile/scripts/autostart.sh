@@ -7,3 +7,4 @@ telegram-desktop -startintray &
 #nitrogen --restore &
 flameshot &
 picom --config $HOME/.config/qtile/scripts/picom.conf &
+cairo-dock &

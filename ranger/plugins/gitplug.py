@@ -4,7 +4,7 @@ from ranger.api.commands import Command
 
 class git(Command):
 
-    commands = 'init status clone add rm restore commit remote push switch checkout tree'.split()
+    commands = 'init status clone add rm restore commit remote push'.split()
 
 
     def execute(self):
@@ -74,12 +74,13 @@ class git(Command):
 
         # commit
         if self.arg(1) == self.commands[6]:
+            if not self.rest(2):
+                return self.fm.notify("Missing commit text", bad=True)
 
             if self.rest(2):
                 subprocess.run(["git", "commit", "-m", self.rest(2), "--quiet"])
                 return self.fm.notify("Successfully commited!")
-            subprocess.run(["git", "commit"])
-
+        
         # remote
         if self.arg(1) == self.commands[7]:
             if not self.arg(2):
@@ -114,29 +115,3 @@ class git(Command):
             if not self.arg(2):
                 subprocess.run(["git", "push", "--quiet"])
                 return self.fm.notify("Repository successfully pushed")
-
-        # switch
-        if self.arg(1) == self.commands[9]:
-            if not self.arg(2):
-                return self.fm.notify("Missing branch!", bad=True)
-
-            if self.arg(3):
-                subprocess.run(["git", "switch", self.arg(3)])
-                return self.fm.notify("Sycessfully switched")
-
-        # checkout
-        if self.arg(1) == self.commands[10]:
-            if not self.arg(2) or (self.arg(2) == "-b" and not self.arg(3)):
-                return self.fm.notify("Please specify branch", bad=True)
-
-            if self.arg(2) == "-b":
-                subprocess.run(["git", "checkout", "-b", self.arg(3)])
-                return self.fm.notify("Successfully checked out new branch")
-
-            subprocess.run(["git", "checkout", self.arg(2)])
-            return self.fm.notify("Successfully switched")
-
-        # tree
-        if self.arg(1) == self.commands[11]:
-            subprocess.run(["git", "log", "--graph", "--abbrev-commit",
-                "--decorate", "--date=relative", "--format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'", "--all"])

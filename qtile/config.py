@@ -189,11 +189,7 @@ screens = [
                 widget.TextBox("|", fontsize=18),
                 widget.Systray(),
                 widget.TextBox("| ", fontsize=18),
-                widget.Clock(
-                    format="%d/%m/%Y %a %I:%M %p",
-                    font="OCR A Std",
-                    fontsize=11
-                    ),
+                widget.Clock(format="%a %d/%m/%Y %I:%M %p"),
             ],
             24,
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders

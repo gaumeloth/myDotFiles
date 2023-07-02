@@ -61,3 +61,4 @@ class my_edit(Command):
         # content of the current directory.
         return self._tab_directory_content()
 from plugins.ranger_udisk_menu.mounter import mount
+from plugins.ranger_udisk_menu.mounter import mount

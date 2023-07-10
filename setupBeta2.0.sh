@@ -96,12 +96,12 @@ echo "Setup plugin ranger e font rofi"
 cd scripts
 ./rangerPluginsSetup.sh
 if [[ $? -ne 0 ]]; then
-  echo "Errore durante lo setup dei plugin di ranger." >&2
+  echo "Errore durante il setup dei plugin di ranger." >&2
   exit 1
 fi
 ./rofiFontSetup.sh
 if [[ $? -ne 0 ]]; then
-  echo "Errore durante lo setup del font di rofi." >&2
+  echo "Errore durante il setup del font di rofi." >&2
   exit 1
 fi
 cd -

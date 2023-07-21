@@ -35,8 +35,8 @@ show_installer() {
     exit 1
   fi
 
-  # Converti la lista selezionata in un array
-  selected_optional_packages_array=($selected_optional_packages)
+  # Converti la lista selezionata in un array utilizzando l'IFS di Bash
+  IFS=$'\n' read -r -a selected_optional_packages_array <<< "$selected_optional_packages"
 
   # Esegui l'installazione dei pacchetti opzionali selezionati
   sudo pacman -Sy "${selected_optional_packages_array[@]}"

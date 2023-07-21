@@ -10,7 +10,7 @@ handle_error() {
 trap 'handle_error' ERR
 
 # Funzione per selezionare ed installare programmi aggiuntivi
-show_intaller() {
+show_installer() {
   whiptail --title "Installazione programmi aggiuntivi" --msgbox "Inizio installazione programmi aggiuntivi." 10 50
   # Array con tutti i pacchetti opzionali
   optional_packages=(

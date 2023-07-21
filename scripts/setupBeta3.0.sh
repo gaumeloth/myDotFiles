@@ -9,6 +9,49 @@ handle_error() {
 # Imposta la gestione degli errori utilizzando trap
 trap 'handle_error' ERR
 
+# Funzione per selezionare ed installare programmi aggiuntivi
+show_intaller() {
+  whiptail --title "Installazione programmi aggiuntivi" --msgbox "Inizio installazione programmi aggiuntivi." 10 50
+  # Array con tutti i pacchetti opzionali
+  optional_packages=(
+    "featherpad" "FeatherPad" OFF
+    "neovim" "Neovim" OFF
+    "code" "Visual Studio Code" OFF
+    "discord" "Discord" OFF
+    "qutebrowser" "Qutebrowser" OFF
+    "libreoffice-still" "LibreOffice (Still)" OFF
+    "libreoffice-still-it" "LibreOffice (Still) Italiano" OFF
+    "firefox-i18n-it" "Firefox (Italiano)" OFF
+    "firefox" "Firefox" OFF
+  )
+
+  # Mostra la checklist per la selezione dei pacchetti opzionali
+  selected_optional_packages=$(whiptail --title "Selezione pacchetti opzionali" --checklist \
+    "Seleziona i pacchetti opzionali da installare:" 20 80 13 "${optional_packages[@]}" 3>&1 1>&2 2>&3)
+
+  if [[ $? -ne 0 ]]; then
+    # L'utente ha premuto Cancel
+    whiptail --title "Annullato" --msgbox "Installazione annullata." 10 50
+    exit 1
+  fi
+
+  # Converti la lista selezionata in un array
+  selected_optional_packages_array=($selected_optional_packages)
+
+  # Esegui l'installazione dei pacchetti opzionali selezionati
+  sudo pacman -Sy "${selected_optional_packages_array[@]}"
+  if [[ $? -ne 0 ]]; then
+    whiptail --title "Errore" --msgbox "Errore durante l'installazione dei pacchetti opzionali." 10 50
+    exit 1
+  fi
+
+  # Comunica all'utente l'esito dell'installazione
+  whiptail --title "Completato" --msgbox "Installazione pacchetti opzionali completata con successo!" 10 50
+}
+
+# Directory di destinazione
+github_dir="$HOME/github"
+
 # Aggiornamento del sistema
 echo "Aggiornamento del sistema"
 sudo pacman -Suy
@@ -18,49 +61,6 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Installazione dei pacchetti
-# Funzione per visualizzare l'interfaccia utente TUI con whiptail
-show_tui() {
-  local selected_packages=()
-  local options=("featherpad" "FeatherPad" "off"
-                 "neovim" "Neovim" "off"
-                 "code" "Visual Studio Code" "off"
-                 "discord" "Discord" "off"
-                 "qutebrowser" "Qutebrowser" "off"
-                 "libreoffice-still" "LibreOffice (Still)" "off"
-                 "libreoffice-still-it" "LibreOffice (Still) Italiano" "off"
-                 "firefox-i18n-it" "Firefox (Italiano)" "off"
-                 "firefox" "Firefox" "off")
-
-  while true; do
-    selected_package=$(whiptail --title "Selezione dei pacchetti" --menu \
-      "Seleziona i pacchetti da installare:" 20 80 13 "${options[@]}" 3>&1 1>&2 2>&3)
-    
-    if [[ $? -eq 0 ]]; then
-      for i in "${!options[@]}"; do
-        if [[ "${options[i]}" == "$selected_package" ]]; then
-          options[i+2]="on"
-          selected_packages+=("${options[i]}")
-        fi
-      done
-    else
-      break
-    fi
-  done
-
-  if [[ ${#selected_packages[@]} -eq 0 ]]; then
-    whiptail --title "Annullato" --msgbox "Installazione annullata." 10 50
-    exit 1
-  fi
-
-  sudo pacman -Sy "${selected_packages[@]}"
-  if [[ $? -ne 0 ]]; then
-    whiptail --title "Errore" --msgbox "Errore durante l'installazione dei pacchetti." 10 50
-    exit 1
-  fi
-
-  whiptail --title "Completato" --msgbox "Installazione completata con successo!" 10 50
-}
-
 # Installazione dei pacchetti di base per il desktop environment
 baseDE=(
   "man-db"
@@ -108,15 +108,17 @@ baseDE=(
   "gentium-plus-font"
   "ttf-indic-otf"
 )
-whiptail --title "Installazione desktop enviorment" --msgbox "Installazione iniziata." 10 50
+whiptail --title "Installazione desktop environment" --msgbox "Installazione iniziata." 10 50
 sudo pacman -Sy "${baseDE[@]}"
 if [[ $? -ne 0 ]]; then
   whiptail --title "Errore" --msgbox "Errore durante l'installazione dei pacchetti base." 10 50
   exit 1
+elif
+  whiptail --title "Completato" --msgbox "Installazione dei pacchetti base completata!" 10 50
 fi
 
 # Visualizza l'interfaccia utente TUI per la selezione dei pacchetti
-show_tui
+show_installer
 
 # Abilita sddm
 echo "Abilita sddm"
@@ -159,29 +161,36 @@ cd -
 
 # Controllo esistenza cartella ~/github e creazione se necessario
 echo "Controllo cartella ~/github"
-if [[ ! -d ~/github ]]; then
+if [[ ! -d "$github_dir" ]]; then
   echo "Creo '~/github/' per organizzare le repository"
-  mkdir -p ~/github
+  mkdir -p "$github_dir"
 fi
 
 # Scaricamento sfondi per variety da repository GitHub
 echo "Scarica sfondi per variety"
-git clone https://github.com/whoisYoges/lwalpapers.git ~/github/lwalpapers
-if [[ $? -ne 0 ]]; then
-  echo "Errore durante il download degli sfondi per variety." >&2
-  exit 1
+if [[ ! -d "$github_dir/lwalpapers" ]]; then
+  git clone https://github.com/whoisYoges/lwalpapers.git "$github_dir/lwalpapers"
+  if [[ $? -ne 0 ]]; then
+    echo "Errore durante il download degli sfondi per variety." >&2
+    exit 1
+  fi
+else
+  echo "Cartella '$github_dir/lwalpapers' già esistente. Salto il download."
 fi
 
 # Scaricamento ed installazione paru AUR helper
 echo "Scarica ed installa paru AUR helper"
-git clone https://aur.archlinux.org/paru.git ~/github/paru
-cd ~/github/paru/
-makepkg -si
-if [[ $? -ne 0 ]]; then
-  echo "Errore durante l'installazione di paru." >&2
-  exit 1
+if ! command -v paru &> /dev/null; then
+  git clone https://aur.archlinux.org/paru.git "$github_dir/paru"
+  cd "$github_dir/paru/"
+  makepkg -si
+  if [[ $? -ne 0 ]]; then
+    echo "Errore durante l'installazione di paru." >&2
+    exit 1
+  fi
+else
+  echo "Paru è già installato. Salto l'installazione."
 fi
-cd -
 
 # Installazione ulteriori pacchetti tramite AUR
 echo "Installazione pacchetti AUR"
@@ -191,17 +200,21 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-# Installazione e scelta temi grub2
-echo "Installazione e scelta temi grub2"
-git clone https://github.com/RomjanHossain/Grub-Themes.git ~/github/Grub-Themes
-cd ~/github/Grub-Themes
-chmod +x install.sh
-sudo bash install.sh
-if [[ $? -ne 0 ]]; then
-  echo "Errore durante l'installazione dei temi grub2." >&2
-  exit 1
+# Installazione e scelta temi GRUB2
+echo "Installazione e scelta temi GRUB2"
+if [[ ! -d "$github_dir/Grub-Themes" ]]; then
+  git clone https://github.com/RomjanHossain/Grub-Themes.git "$github_dir/Grub-Themes"
+  cd "$github_dir/Grub-Themes"
+  chmod +x install.sh
+  sudo bash install.sh
+  if [[ $? -ne 0 ]]; then
+    echo "Errore durante l'installazione dei temi GRUB2." >&2
+    exit 1
+  fi
+  cd -
+else
+  echo "Cartella '$github_dir/Grub-Themes' già esistente. Salto il download e l'installazione dei temi."
 fi
-cd -
 
 # Gestione delle opzioni dell'utente
 echo "Seleziona un'opzione:"

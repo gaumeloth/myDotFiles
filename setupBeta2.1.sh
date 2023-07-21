@@ -1,5 +1,3 @@
-
-
 #!/bin/bash -e
 
 # Funzione per gestire gli errori

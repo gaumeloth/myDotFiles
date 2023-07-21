@@ -110,10 +110,11 @@ baseDE=(
 )
 whiptail --title "Installazione desktop environment" --msgbox "Installazione iniziata." 10 50
 sudo pacman -Sy "${baseDE[@]}"
+
 if [[ $? -ne 0 ]]; then
   whiptail --title "Errore" --msgbox "Errore durante l'installazione dei pacchetti base." 10 50
   exit 1
-elif
+else
   whiptail --title "Completato" --msgbox "Installazione dei pacchetti base completata!" 10 50
 fi
 
